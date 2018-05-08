@@ -1,0 +1,284 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>DB CMS</title>
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+<div class="container-fluid">
+  <div class="row introduction">
+    <div class="col-md-12">
+      <h1>
+        🎗️DanceBlue Client Content Management
+      </h1>
+      <p>
+        This site will allow you to create new blog posts and publish them immediately to the client applications. It's
+        important to carefully review the content you create before you post it because, currently, this site doesn't
+        allow you to remove posts once you create them. To create a post, just fill in the information below. If you
+        want to add a picture to the post, select "Attach Image".
+      </p>
+      <p>
+        The preview on the right gives you an idea of how the post will look on the client. Of course, some sizing will
+        be different, but it is important to consult the preview before publishing the blog to ensure that all data was
+        entered correctly.
+      </p>
+      <hr/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8 col-sm-8">
+      <p class="status" id="form-status">
+        Your post was successfully posted!
+      </p>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Title">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="author">Author</label>
+            <input type="text" class="form-control" id="author" placeholder="Author">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label for="content">Body</label>
+            <textarea id="content" class="form-control main"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <label class="label-file-upload" for="image-upload">Attach Image</label>
+            <input type="file" class="custom-file-input" id="image-upload">
+            <button type="button" class="btn btn-primary" id="post">Publish</button>
+          </div>
+          <!--<div class="form-group col-md-6">-->
+          <!--</div>-->
+        </div>
+      </form>
+    </div>
+    <div class="col-md-4 col-sm-4">
+      <div class="screen-base">
+        <div class="screen-image" id="screen-preview-image">
+          <img src="img/no_image.png" class="screen-image-content" id="screen-preview-image-content"/>
+        </div>
+        <div class="screen-content">
+          <div class="screen-title" id="screen-preview-title">Title</div>
+          <div class="screen-author" id="screen-preview-author">Author</div>
+          <div class="screen-date" id="screen-preview-date">Date</div>
+          <div id="clear"></div>
+          <hr>
+          <div class="screen-body" id="screen-preview-body">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis sapien urna, ut consequat turpis porta id. Phasellus dui diam, mollis quis sapien a, congue suscipit tellus. Aliquam dictum metus ut metus lacinia dapibus. Sed non varius orci. Sed lacinia velit id bibendum vestibulum. In hac habitasse platea dictumst. Vivamus id lacinia ante, ut elementum ante. Mauris at ipsum suscipit, efficitur felis eget, blandit turpis. Curabitur lobortis condimentum odio sed dapibus. Donec at tellus vulputate, semper elit consectetur, lacinia nunc. Maecenas ultrices, enim sit amet imperdiet ullamcorper, metus tellus faucibus ligula, at volutpat mi libero ut enim. Praesent vehicula placerat sem id auctor.
+
+            Duis ullamcorper convallis arcu, at cursus orci sollicitudin eget. Pellentesque mollis ante quis magna tempor, non condimentum orci vehicula. Pellentesque id magna nibh. Nulla volutpat et lacus a tristique. Nunc quis metus a ex porta tempor vitae vitae ante. Suspendisse ultrices accumsan pharetra. Vivamus eget dolor dictum, interdum nunc ac, semper ligula. Fusce semper nisi in laoreet vulputate. Mauris eu tellus id sem tempor mollis. Morbi mollis nulla eu arcu laoreet eleifend. Nam nec quam mauris. Vivamus lacinia id odio id fringilla. Vivamus et libero odio.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script src="https://www.gstatic.com/firebasejs/5.0.1/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBWOdKNTtarOJPVJ_W65EFxcCv1Wxam668",
+    authDomain: "danceblue-demo.firebaseapp.com",
+    databaseURL: "https://danceblue-demo.firebaseio.com",
+    projectId: "danceblue-demo",
+    storageBucket: "gs://danceblue-demo.appspot.com/",
+    messagingSenderId: "934798828901"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<script>
+  $(document).ready(function() {
+
+    // GET SCREEN ELEMENTS
+    const screenTitle = $("#screen-preview-title");
+    const title = $("#title");
+
+    const screenAuthor = $("#screen-preview-author");
+    const author = $("#author");
+
+    const screenContent = $("#screen-preview-body");
+    const content = $("#content");
+
+    const screenImage = $("#screen-preview-image-content");
+    const image = $("#image-upload");
+
+    const screenDate = $("#screen-preview-date");
+
+    const post = $("#post");
+
+    const status = $("#form-status");
+
+    const STATUS_STATE_SUCCESS = "success";
+    const STATUS_STATE_FAIL = "fail";
+    const STATUS_STATE_PROGRESS = "progress";
+    const STATUS_STATE_BEGIN = "begin";
+
+    // BIND ELEMENTS
+    title.on("change paste keyup", function() {
+        status.removeClass( 'failure' ).removeClass( 'success' );
+        screenTitle.text(title.val());
+    });
+
+    author.on("change paste keyup", function() {
+      status.removeClass( 'failure' ).removeClass( 'success' );
+      screenAuthor.text(author.val());
+    });
+
+    content.on("change paste keyup", function() {
+      status.removeClass( 'failure' ).removeClass( 'success' );
+      screenContent.text(content.val());
+    });
+
+    image.change(function(){
+      readURL(this);
+    });
+
+    post.click(function() {
+        if (title.val() && author.val() && content.val()) {
+            publish(title.val(), author.val(), content.val())
+        }
+        else {
+            displayStatus(STATUS_STATE_FAIL);
+        }
+    });
+
+    parseDate();
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          screenImage.attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function parseDate() {
+      var d = new Date();
+      var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      screenDate.text(months[d.getMonth()] + " " +  d.getDay() + ", " + d.getFullYear());
+    }
+
+    function publish(title, author, body) {
+
+      // Check if photo exists to upload
+      if (image.get(0).files[0]) {
+
+          const file = image.get(0).files[0];
+          const name = (+new Date()) + '-' + file.name;
+          const metadata = { contentType: file.type };
+          const ref = firebase.storage().ref();
+
+          var uploadTask = ref.child(name).put(file, metadata);
+
+          uploadTask.on('state_changed', function(snapshot){
+
+            // Observe state change events such as progress, pause, and resume
+            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            displayStatus(STATUS_STATE_PROGRESS, progress);
+
+            switch (snapshot.state) {
+              case firebase.storage.TaskState.PAUSED: // or 'paused'
+                break;
+              case firebase.storage.TaskState.RUNNING: // or 'running'
+                break;
+            }
+          }, function(error) {
+              displayStatus(STATUS_STATE_FAIL);
+          }, function() {
+
+              uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                console.log('File available at', downloadURL);
+
+                // A post entry.
+                var postData = {
+                  author: author,
+                  body: body,
+                  title: title,
+                  asset_url: downloadURL
+                };
+
+                // Get a key for a new Post.
+                var newPostKey = firebase.database().ref().child('posts').push().key;
+
+                var updates = {};
+                updates['/posts/' + newPostKey] = postData;
+                firebase.database().ref().update(updates);
+                displayStatus(STATUS_STATE_SUCCESS);
+            });
+          });
+      }
+      // There is no attached image
+      else {
+        // A post entry.
+        var postData = {
+          author: author,
+          body: body,
+          title: title
+        };
+
+        // Get a key for a new Post.
+        var newPostKey = firebase.database().ref().child('posts').push().key;
+
+        var updates = {};
+        updates['/posts/' + newPostKey] = postData;
+        firebase.database().ref().update(updates);
+        displayStatus(STATUS_STATE_SUCCESS);
+      }
+    }
+
+    function clearFields() {
+        title.val("");
+        author.val("");
+        content.val("");
+    }
+
+    function displayStatus(status, progress) {
+      switch (status) {
+        case STATUS_STATE_BEGIN:
+          $("#form-status").addClass( 'success' ).removeClass( 'failure' );
+          $("#form-status").text( 'Uploading...' );
+          break;
+        case STATUS_STATE_PROGRESS:
+          $("#form-status").addClass( 'success' ).removeClass( 'failure' );
+          $("#form-status").text( 'Uploading...' + progress + '%' );
+          break;
+        case STATUS_STATE_FAIL:
+          $("#form-status").addClass( 'failure' ).removeClass( 'success' );
+          $("#form-status").text( 'There was an error processing this post and it was not published. ' +
+            'Please review the content you provided and try again.' );
+          break;
+        case STATUS_STATE_SUCCESS:
+          $("#form-status").addClass( 'success' ).removeClass( 'failure' );
+          $("#form-status").text( 'Your post was published successfully!' );
+          clearFields();
+          break;
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
