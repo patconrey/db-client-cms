@@ -11,31 +11,73 @@
 </head>
 
 <body>
+<nav class="navbar">
+  <h1>
+    🎗️DanceBlue Client Content Manager
+  </h1>
+</nav>
 <div class="container-fluid">
   <div class="row introduction">
     <div class="col-md-12">
       <h1>
-        🎗️DanceBlue Client Content Management
+        👋 Hi there!
       </h1>
       <p>
         This site will allow you to create new blog posts and publish them immediately to the client applications. It's
         important to carefully review the content you create before you post it because, currently, this site doesn't
-        allow you to remove posts once you create them. To create a post, just fill in the information below. If you
-        want to add a picture to the post, select "Attach Image".
+        allow you to remove posts once you create them.
       </p>
       <p>
-        The preview on the right gives you an idea of how the post will look on the client. Of course, some sizing will
-        be different, but it is important to consult the preview before publishing the blog to ensure that all data was
-        entered correctly.
+        If you spot any bugs, send an email over to patrickconrey@gmail.com and he'll figure it out! If he doesn't respond,
+        feel free to tweet him at @PatConrey.
       </p>
-      <hr/>
     </div>
   </div>
-  <div class="row">
+
+  <hr/>
+
+  <!-- CURRENT POSTS -->
+
+  <div class="row posts" id="current-posts">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="description">
+        <h1>
+          📖 Current Posts
+        </h1>
+        <p>
+          Here are all the current posts. We're showing their titles and the pictures associated with them. As of now,
+          these are just for display. You can't click them or otherwise interact with them. They're just here to give you
+          a quick look at what's already out there.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <hr/>
+
+  <!-- NEW POST -->
+
+  <div class="row new-post">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="description">
+        <h1>
+          ✏️ Make a New Post
+        </h1>
+        <p>
+          To create a post, just fill in the information below. If you want to add a picture to the post, select
+          "Attach Image". The preview on the right gives you an idea of how the post will look on the client. Of course,
+          some sizing will be different, but it is important to consult the preview before publishing the blog to
+          ensure that all data was entered correctly.
+        </p>
+        <p>
+          After you publish the post, you will receive verbal confirmation by some text saying that your post was
+          successfully published. The post should also pop up under the "Current Posts" section immediately. If it doesn't,
+          your post might not have been published. Wait a little bit and check back. If it still hasn't popped up,
+          publish it again.
+        </p>
+      </div>
+    </div>
     <div class="col-md-8 col-sm-8">
-      <p class="status" id="form-status">
-        Your post was successfully posted!
-      </p>
       <form>
         <div class="form-row">
           <div class="form-group col-md-6">
@@ -54,13 +96,14 @@
           </div>
         </div>
         <div class="form-row">
+          <p class="status" id="form-status">
+            Your post was successfully posted!
+          </p>
           <div class="form-group col-md-12">
             <label class="label-file-upload" for="image-upload">Attach Image</label>
             <input type="file" class="custom-file-input" id="image-upload">
             <button type="button" class="btn btn-primary" id="post">Publish</button>
           </div>
-          <!--<div class="form-group col-md-6">-->
-          <!--</div>-->
         </div>
       </form>
     </div>
@@ -162,7 +205,17 @@
         }
     });
 
+    //
+    // LIFECYCLE
+    //
+
     parseDate();
+
+    fetchPosts();
+
+    //
+    // METHODS
+    //
 
     function readURL(input) {
       if (input.files && input.files[0]) {
@@ -277,8 +330,54 @@
           break;
       }
     }
+
+    function fetchPosts() {
+        const ref = firebase.database().ref('posts');
+        ref.on('child_added', function(snapshot) {
+            renderPost(snapshot);
+        });
+    }
+
+    // the parameter post is a Firebase Snapshot
+    function renderPost(post) {
+
+      // Grab the template script
+      var exampleTemplateScript = $("#example-template").html();
+
+      // Compile the template
+      var template = Handlebars.compile(exampleTemplateScript);
+
+      // Define our data object
+      var context = {
+        author : (post.val() && post.val().author || 'Author'),
+        content : (post.val() && post.val().body || 'Body'),
+        asset : (post.val() && post.val().asset_url || ''),
+        title : (post.val() && post.val().title || 'Title')
+      };
+
+      // Pass our data to the template
+      var theCompiledHtml = template(context);
+
+      // Add the compiled html to the page
+      $('#current-posts').append(theCompiledHtml);
+    }
   });
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+
+<!--TEMPLATES-->
+<script id="example-template" type="text/x-handlebars-template">
+  <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div class="card-base">
+      {{#if asset}}
+        <img src="{{asset}}"/>
+      {{/if}}
+      <h1>{{ title }}</h1>
+    </div>
+  </div>
+</script>
+
 
 </body>
 </html>

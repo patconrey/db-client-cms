@@ -11,8 +11,14 @@ $grey-200: #eeeeee;
   font-family: 'Roboto', sans-serif;
 }
 
+.row {
+  h1 {
+    font-size: 1.85em;
+  }
+}
+
 .introduction {
-  padding: 20px 20px 20px 20px;
+  padding: 0 20px 20px 20px;
   hr {
     margin-top: 30px;
     margin-bottom: 0;
@@ -33,31 +39,6 @@ p {
       color: #d44f53;
     }
   }
-}
-
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;  /* Preferred icon size */
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-
-  /* Support for all WebKit browsers. */
-  -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. */
-  text-rendering: optimizeLegibility;
-
-  /* Support for Firefox. */
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Support for IE. */
-  font-feature-settings: 'liga';
 }
 
 .form-main {
@@ -90,23 +71,24 @@ input[type=text], input[type=password], input[type=email] {
   background-color: white;
   border: 1px solid $grey-200;
   overflow: scroll;
+  -webkit-box-shadow: 0px 3px 4px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0px 3px 4px 0px rgba(0,0,0,0.15);
+  box-shadow: 0px 3px 4px 0px rgba(0,0,0,0.15);
+  border-radius: 2px;
   .screen-image {
     width: 100%;
     height: 180px;
     background-color: #efefef;
     overflow: hidden;
-    .screen-image-content {
-      background-color: rebeccapurple;
-      max-width: 100%;
-      width: auto;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
       overflow: hidden;
-      img {
-        background-repeat: no-repeat;
-        background-size: cover;
-      }
     }
   }
   margin: auto;
+  margin-bottom: 40px;
   .screen-content {
     padding: 14px 14px;
     font-weight: 300;
@@ -164,6 +146,9 @@ input[type=text], input[type=password], input[type=email] {
   display: none;
 }
 
+.description {
+}
+
 textarea {
   &.main {
     border: none;
@@ -206,5 +191,78 @@ button {
       background-color: $blue-500;
       box-shadow: 0 3px 8px rgba(0,0,0,0.25), 0 3px 9px rgba(0,0,0,0.22);
     }
+  }
+}
+
+.navbar {
+  background-color: $blue-500;
+  border-radius: 0;
+  outline: none;
+  border: none;
+  box-shadow: 0 2.5px 4px rgba(0,0,0,0.18), 0 2.5px 4px rgba(0,0,0,0.24);
+  color: white;
+  h1 {
+    font-size: 2em;
+    font-weight: 400;
+    padding: 0.1em 1em 0.1em 1em;
+  }
+}
+
+.sign-in {
+  background-color: rebeccapurple;
+}
+
+//
+//  TEMPLATE STYLES
+//
+.posts, .new-post {
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  .form-group {
+    padding-left: 0;
+  }
+}
+.card-base {
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 2px 6px 0px rgba(0,0,0,0.2);
+  height: 150px;
+  overflow: hidden;
+  padding: 1.5em 1.6em;
+  margin: 0.5em -0.25em;
+  font-size: 14px;
+  position: relative;
+  transition: box-shadow 0.1s ease-out;
+  &:hover {
+    -webkit-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 5px 6px 0px rgba(0,0,0,0.2);
+  }
+  img {
+    margin: -1.5em -1.6em;
+    height: 150%;
+    width: 150%;
+    object-fit: cover;
+    overflow: hidden;
+    -webkit-filter: brightness(70%); /* Safari 6.0 - 9.0 */
+    filter: brightness(70%);
+    transition: filter 0.15s ease-in;
+    &:hover {
+      filter: brightness(60%);
+    }
+  }
+  h1 {
+    color: white;
+    font-size: 1.28em;
+    font-weight: 400;
+    margin: 0;
+    position: absolute;
+    bottom: 1em;
+  }
+  h3 {
+    font-size: 1.25em;
+    font-weight: 300;
+    margin: 0;
   }
 }
