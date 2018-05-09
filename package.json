@@ -73,6 +73,7 @@
     "url": "https://github.com/h5bp/html5-boilerplate.git"
   },
   "dependencies": {
+    "handlebars": "^4.0.11",
     "material-design-icons": "^3.0.1"
   }
 }
